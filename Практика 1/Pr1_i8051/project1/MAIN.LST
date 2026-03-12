@@ -1,0 +1,38 @@
+MAIN                                                                                                          PAGE 1
+
+                       1    $MOD51
+0000                   2    org 00h
+                       3    
+0000 C290              4    clr P1.0
+0002 901000            5        mov dptr, #1000h    
+0005 7A04              6        mov r2, #04h        
+0007 7955              7        mov r1, #055h       
+                       8    
+0009                   9    test_page:
+0009 7B00             10        mov r3, #00h        
+                      11    
+000B                  12    test_byte:
+000B E9               13        mov a, r1
+000C F0               14        movx @dptr, a       
+000D E0               15        movx a, @dptr       
+000E 6455             16        xrl a, #055h        
+0010 7007             17        jnz error           
+0012 A3               18        inc dptr            
+0013 DBF6             19        djnz r3, test_byte  
+0015 DAF2             20        djnz r2, test_page  
+                      21    
+0017 80FE             22        sjmp $              
+                      23    
+0019                  24    error:
+0019 D290             25        setb P1.0           
+001B 80FE             26        sjmp $              
+                      27    
+                      28    END
+
+VERSION 1.2k ASSEMBLY COMPLETE, 0 ERRORS FOUND
+MAIN                                                                                                          PAGE 2
+
+ERROR. . . . . . . . . . . . . .  C ADDR  0019H  
+P1 . . . . . . . . . . . . . . .  D ADDR  0090H  PREDEFINED  
+TEST_BYTE. . . . . . . . . . . .  C ADDR  000BH  
+TEST_PAGE. . . . . . . . . . . .  C ADDR  0009H  
