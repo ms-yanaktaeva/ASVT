@@ -1,0 +1,270 @@
+MAIN                                                                                                          PAGE 1
+
+                       1    $MOD51
+0000 020020            2    jmp start
+                       3    
+0020                   4    org 20h
+0020                   5    start:
+0020 7590F0            6        mov p1, #0f0h
+0023 120105            7        lcall lcd_init
+0026 120160            8        lcall lcd_string
+0029 74C0              9        mov a, #0c0h
+002B 120146           10        lcall lcd_cmd
+002E 7800             11        mov r0, #0
+                      12    
+0030                  13    main_loop:
+0030 120071           14        lcall get_key
+0033 B4FF02           15        cjne a, #0ffh, process_key
+0036 80F8             16        sjmp main_loop
+                      17    
+0038                  18    process_key:
+0038 B44305           19        cjne a, #'C', add_symbol
+003B 120055           20        lcall clear_line
+003E 80F0             21        sjmp main_loop
+                      22    
+0040                  23    add_symbol:
+0040 B81002           24        cjne r0, #16, add_char
+0043 80EB             25        sjmp main_loop    
+                      26    
+0045                  27    add_char:
+0045 120153           28        lcall lcd_char
+0048 08               29        inc r0
+0049 12016B           30        lcall delay_short
+004C                  31    wait_release:
+004C 120071           32        lcall get_key
+004F B4FFFA           33        cjne a, #0ffh, wait_release
+0052 020030           34        ljmp main_loop
+                      35    
+0055                  36    clear_line:
+0055 E8               37        mov a, r0
+0056 C0E0             38        push acc
+0058 74C0             39        mov a, #0c0h
+005A 120146           40        lcall lcd_cmd
+005D 7910             41        mov r1, #16
+005F                  42    clear_loop:
+005F 7420             43        mov a, #20h
+0061 120153           44        lcall lcd_char
+0064 D9F9             45        djnz r1, clear_loop
+0066 74C0             46        mov a, #0c0h
+0068 120146           47        lcall lcd_cmd
+006B D0E0             48        pop acc
+006D F8               49        mov r0, a
+006E 7800             50        mov r0, #0
+0070 22               51        ret
+                      52    
+0071                  53    get_key:
+0071 C290             54        clr p1.0
+0073 120100           55        lcall delay_micro
+0076 E590             56        mov a, p1
+0078 54F0             57        anl a, #0f0h
+007A B4F02F           58        cjne a, #0f0h, key_row0
+MAIN                                                                                                          PAGE 2
+
+007D D290             59        setb p1.0
+007F C291             60        clr p1.1
+0081 120100           61        lcall delay_micro
+0084 E590             62        mov a, p1
+0086 54F0             63        anl a, #0f0h
+0088 B4F036           64        cjne a, #0f0h, key_row1
+008B D291             65        setb p1.1
+008D C292             66        clr p1.2
+008F 120100           67        lcall delay_micro
+0092 E590             68        mov a, p1
+0094 54F0             69        anl a, #0f0h
+0096 B4F03D           70        cjne a, #0f0h, key_row2
+0099 D292             71        setb p1.2
+009B C293             72        clr p1.3
+009D 120100           73        lcall delay_micro
+00A0 E590             74        mov a, p1
+00A2 54F0             75        anl a, #0f0h
+00A4 B4F044           76        cjne a, #0f0h, key_row3
+00A7 D293             77        setb p1.3
+00A9 74FF             78        mov a, #0ffh
+00AB 22               79        ret
+                      80    
+00AC                  81    key_row0:
+00AC B4E003           82        cjne a, #0e0h, r0c2
+00AF 7437             83        mov a, #'7'
+00B1 22               84        ret
+00B2                  85    r0c2:
+00B2 B4D003           86        cjne a, #0d0h, r0c3
+00B5 7438             87        mov a, #'8'
+00B7 22               88        ret
+00B8                  89    r0c3:
+00B8 B4B003           90        cjne a, #0b0h, r0c4
+00BB 7439             91        mov a, #'9'
+00BD 22               92        ret
+00BE                  93    r0c4:
+00BE 742B             94        mov a, #'+'
+00C0 22               95        ret
+                      96    
+00C1                  97    key_row1:
+00C1 B4E003           98        cjne a, #0e0h, r1c2
+00C4 7434             99        mov a, #'4'
+00C6 22              100        ret
+00C7                 101    r1c2:
+00C7 B4D003          102        cjne a, #0d0h, r1c3
+00CA 7435            103        mov a, #'5'
+00CC 22              104        ret
+00CD                 105    r1c3:
+00CD B4B003          106        cjne a, #0b0h, r1c4
+00D0 7436            107        mov a, #'6'
+00D2 22              108        ret
+00D3                 109    r1c4:
+00D3 742D            110        mov a, #'-'
+00D5 22              111        ret
+                     112    
+00D6                 113    key_row2:
+00D6 B4E003          114        cjne a, #0e0h, r2c2
+00D9 7431            115        mov a, #'1'
+00DB 22              116        ret
+MAIN                                                                                                          PAGE 3
+
+00DC                 117    r2c2:
+00DC B4D003          118        cjne a, #0d0h, r2c3
+00DF 7432            119        mov a, #'2'
+00E1 22              120        ret
+00E2                 121    r2c3:
+00E2 B4B003          122        cjne a, #0b0h, r2c4
+00E5 7433            123        mov a, #'3'
+00E7 22              124        ret
+00E8                 125    r2c4:
+00E8 742A            126        mov a, #'*'
+00EA 22              127        ret
+                     128    
+00EB                 129    key_row3:
+00EB B4E003          130        cjne a, #0e0h, r3c2
+00EE 7443            131        mov a, #'C'
+00F0 22              132        ret
+00F1                 133    r3c2:
+00F1 B4D003          134        cjne a, #0d0h, r3c3
+00F4 7430            135        mov a, #'0'
+00F6 22              136        ret
+00F7                 137    r3c3:
+00F7 B4B003          138        cjne a, #0b0h, r3c4
+00FA 743D            139        mov a, #'='
+00FC 22              140        ret
+00FD                 141    r3c4:
+00FD 742F            142        mov a, #'/'
+00FF 22              143        ret
+                     144    
+0100                 145    delay_micro:
+0100 7F05            146        mov r7, #5
+0102 DFFE            147        djnz r7, $
+0104 22              148        ret
+                     149    
+0105                 150    lcd_init:
+0105 7430            151        mov a, #30h
+0107 120146          152        lcall lcd_cmd
+010A 120170          153        lcall delay
+010D 7430            154        mov a, #30h
+010F 120146          155        lcall lcd_cmd
+0112 120170          156        lcall delay
+0115 7430            157        mov a, #30h
+0117 120146          158        lcall lcd_cmd
+011A 120170          159        lcall delay
+011D 7438            160        mov a, #38h
+011F 120146          161        lcall lcd_cmd
+0122 120170          162        lcall delay
+0125 7408            163        mov a, #08h
+0127 120146          164        lcall lcd_cmd
+012A 120170          165        lcall delay
+012D 7401            166        mov a, #01h
+012F 120146          167        lcall lcd_cmd
+0132 120170          168        lcall delay
+0135 7406            169        mov a, #06h
+0137 120146          170        lcall lcd_cmd
+013A 120170          171        lcall delay
+013D 740F            172        mov a, #0fh
+013F 120146          173        lcall lcd_cmd
+0142 120170          174        lcall delay
+MAIN                                                                                                          PAGE 4
+
+0145 22              175        ret
+                     176    
+0146                 177    lcd_cmd:
+0146 F580            178        mov p0, a
+0148 C2A1            179        clr p2.1
+014A C2A2            180        clr p2.2
+014C D2A0            181        setb p2.0
+014E 00              182        nop
+014F 00              183        nop
+0150 C2A0            184        clr p2.0
+0152 22              185        ret
+                     186    
+0153                 187    lcd_char:
+0153 F580            188        mov p0, a
+0155 D2A1            189        setb p2.1
+0157 C2A2            190        clr p2.2
+0159 D2A0            191        setb p2.0
+015B 00              192        nop
+015C 00              193        nop
+015D C2A0            194        clr p2.0
+015F 22              195        ret
+                     196    
+0160                 197    lcd_string:
+0160 E4              198        clr a
+0161 93              199        movc a, @a+dptr
+0162 6006            200        jz string_end
+0164 120153          201        lcall lcd_char
+0167 A3              202        inc dptr
+0168 80F6            203        sjmp lcd_string
+016A                 204    string_end:
+016A 22              205        ret
+                     206    
+016B                 207    delay_short:
+016B 7F0A            208        mov r7, #10
+016D DFFE            209        djnz r7, $
+016F 22              210        ret
+                     211    
+0170                 212    delay:
+0170 7F32            213        mov r7, #50
+0172 7E64            214    d1: mov r6, #100
+0174 DEFE            215    d2: djnz r6, d2
+0176 DFFA            216        djnz r7, d1
+0178 22              217        ret
+                     218    
+                     219    END
+
+VERSION 1.2k ASSEMBLY COMPLETE, 0 ERRORS FOUND
+MAIN                                                                                                          PAGE 5
+
+ACC. . . . . . . . . . . . . . .  D ADDR  00E0H  PREDEFINED  
+ADD_CHAR . . . . . . . . . . . .  C ADDR  0045H  
+ADD_SYMBOL . . . . . . . . . . .  C ADDR  0040H  
+CLEAR_LINE . . . . . . . . . . .  C ADDR  0055H  
+CLEAR_LOOP . . . . . . . . . . .  C ADDR  005FH  
+D1 . . . . . . . . . . . . . . .  C ADDR  0172H  
+D2 . . . . . . . . . . . . . . .  C ADDR  0174H  
+DELAY. . . . . . . . . . . . . .  C ADDR  0170H  
+DELAY_MICRO. . . . . . . . . . .  C ADDR  0100H  
+DELAY_SHORT. . . . . . . . . . .  C ADDR  016BH  
+GET_KEY. . . . . . . . . . . . .  C ADDR  0071H  
+KEY_ROW0 . . . . . . . . . . . .  C ADDR  00ACH  
+KEY_ROW1 . . . . . . . . . . . .  C ADDR  00C1H  
+KEY_ROW2 . . . . . . . . . . . .  C ADDR  00D6H  
+KEY_ROW3 . . . . . . . . . . . .  C ADDR  00EBH  
+LCD_CHAR . . . . . . . . . . . .  C ADDR  0153H  
+LCD_CMD. . . . . . . . . . . . .  C ADDR  0146H  
+LCD_INIT . . . . . . . . . . . .  C ADDR  0105H  
+LCD_STRING . . . . . . . . . . .  C ADDR  0160H  
+MAIN_LOOP. . . . . . . . . . . .  C ADDR  0030H  
+P0 . . . . . . . . . . . . . . .  D ADDR  0080H  PREDEFINED  
+P1 . . . . . . . . . . . . . . .  D ADDR  0090H  PREDEFINED  
+P2 . . . . . . . . . . . . . . .  D ADDR  00A0H  PREDEFINED  
+PROCESS_KEY. . . . . . . . . . .  C ADDR  0038H  
+R0C2 . . . . . . . . . . . . . .  C ADDR  00B2H  
+R0C3 . . . . . . . . . . . . . .  C ADDR  00B8H  
+R0C4 . . . . . . . . . . . . . .  C ADDR  00BEH  
+R1C2 . . . . . . . . . . . . . .  C ADDR  00C7H  
+R1C3 . . . . . . . . . . . . . .  C ADDR  00CDH  
+R1C4 . . . . . . . . . . . . . .  C ADDR  00D3H  
+R2C2 . . . . . . . . . . . . . .  C ADDR  00DCH  
+R2C3 . . . . . . . . . . . . . .  C ADDR  00E2H  
+R2C4 . . . . . . . . . . . . . .  C ADDR  00E8H  
+R3C2 . . . . . . . . . . . . . .  C ADDR  00F1H  
+R3C3 . . . . . . . . . . . . . .  C ADDR  00F7H  
+R3C4 . . . . . . . . . . . . . .  C ADDR  00FDH  
+START. . . . . . . . . . . . . .  C ADDR  0020H  
+STRING_END . . . . . . . . . . .  C ADDR  016AH  
+WAIT_RELEASE . . . . . . . . . .  C ADDR  004CH  
