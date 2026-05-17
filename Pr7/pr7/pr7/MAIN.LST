@@ -1,0 +1,132 @@
+MAIN                                                                                                          PAGE 1
+
+                       1    $MOD52 
+0000                   2    ORG 0000H      ;nach pamyati
+                       3    
+0000 02002E            4    LJMP START
+002B                   5    ORG 002BH     ; adres prer taymera
+                       6    
+002B 020084            7    LJMP TIMER2_ISR
+  0030                 8    DUTY EQU 30H    ;koyf zapol 
+  0031                 9    STEP_CNT EQU 31H    ;chet schagov
+  0090                10    PWM_OUT BIT 090H    ; bit vyxoda
+  0091                11    KEY_INC BIT 091H       ; yvelech koyf
+  0092                12    KEY_DEC BIT 092H      ; ymen koyf
+                      13    
+002E                  14    START:  ; tochka vchoda
+002E 758170           15    MOV SP, #70H
+0031 7590FF           16    MOV P1, #0FFH
+0034 753032           17    MOV DUTY, #50 ; iznach koyf zapol50%
+0037 753100           18    MOV STEP_CNT, #00    ;obnulenie 
+                      19    ; Fosc=12 mgz, T=0,06c  R=64936=0xFDA8
+003A 75CBFD           20    MOV RCAP2H, #0FDH
+003D 75CAA8           21    MOV RCAP2L, #0A8H
+0040 75CDFD           22    MOV TH2, #0FDH
+0043 75CCA8           23    MOV TL2, #0A8H
+0046 75C800           24    MOV T2CON, #00H      ;obnylyaet registr
+0049 C2CF             25    CLR TF2                 ;sbros flagov
+004B C2CE             26    CLR EXF2
+004D D290             27    SETB PWM_OUT            ;nach yroven
+004F D2AD             28    SETB ET2                      
+0051 D2AF             29    SETB EA                          ;global preryvan
+0053 D2CA             30    SETB TR2                        ;zapusk taymera
+                      31    
+0055                  32    MAIN:    ;osn cikl
+0055 309114           33    JNB KEY_INC, SET_80
+0058 309202           34    JNB KEY_DEC, SET_50
+005B 80F8             35    SJMP MAIN
+                      36    
+005D                  37    SET_50:
+005D 117B             38    ACALL DEBOUNCE
+005F 2092F3           39    JB KEY_DEC, MAIN
+0062 753032           40    MOV DUTY, #50
+                      41    
+0065                  42    WAIT_REL_50:
+0065 3092FD           43    JNB KEY_DEC, WAIT_REL_50
+0068 117B             44    ACALL DEBOUNCE
+006A 80E9             45    SJMP MAIN
+                      46    
+006C                  47    SET_80:
+006C 117B             48    ACALL DEBOUNCE
+006E 2091E4           49    JB KEY_INC, MAIN
+0071 753050           50    MOV DUTY, #80
+                      51    
+0074                  52    WAIT_REL_80:
+0074 3091FD           53    JNB KEY_INC, WAIT_REL_80
+0077 117B             54    ACALL DEBOUNCE
+0079 80DA             55    SJMP MAIN
+                      56    
+007B                  57    DEBOUNCE:     ;drebesg
+007B 7F14             58    MOV R7, #20
+MAIN                                                                                                          PAGE 2
+
+007D 7EFA             59    DB1: MOV R6, #250
+007F DEFE             60    DB2: DJNZ R6, DB2
+0081 DFFA             61    DJNZ R7, DB1
+0083 22               62    RET
+                      63    
+0084                  64    TIMER2_ISR:     ;obrab prer taymera
+0084 C0E0             65    PUSH ACC
+0086 C0D0             66    PUSH PSW
+0088 C2CF             67    CLR TF2
+008A C2CE             68    CLR EXF2
+008C E531             69    MOV A, STEP_CNT
+008E C3               70    CLR C
+008F 9530             71    SUBB A, DUTY
+0091 4004             72    JC PWM_HIGH
+                      73    
+0093                  74    PWM_LOW:
+0093 C290             75    CLR PWM_OUT
+0095 8002             76    SJMP NEXT_STEP
+                      77    
+0097                  78    PWM_HIGH:
+0097 D290             79    SETB PWM_OUT
+                      80    
+0099                  81    NEXT_STEP:
+0099 0531             82    INC STEP_CNT
+009B E531             83    MOV A, STEP_CNT
+009D B46403           84    CJNE A, #100, ISR_EXIT
+00A0 753100           85    MOV STEP_CNT, #00
+                      86    
+00A3                  87    ISR_EXIT:
+00A3 D0D0             88    POP PSW
+00A5 D0E0             89    POP ACC
+00A7 32               90    RETI
+                      91    END
+
+VERSION 1.2k ASSEMBLY COMPLETE, 0 ERRORS FOUND
+MAIN                                                                                                          PAGE 3
+
+ACC. . . . . . . . . . . . . . .  D ADDR  00E0H  PREDEFINED  
+DB1. . . . . . . . . . . . . . .  C ADDR  007DH  
+DB2. . . . . . . . . . . . . . .  C ADDR  007FH  
+DEBOUNCE . . . . . . . . . . . .  C ADDR  007BH  
+DUTY . . . . . . . . . . . . . .    NUMB  0030H  
+EA . . . . . . . . . . . . . . .  B ADDR  00AFH  PREDEFINED  
+ET2. . . . . . . . . . . . . . .  B ADDR  00ADH  PREDEFINED  
+EXF2 . . . . . . . . . . . . . .  B ADDR  00CEH  PREDEFINED  
+ISR_EXIT . . . . . . . . . . . .  C ADDR  00A3H  
+KEY_DEC. . . . . . . . . . . . .  B ADDR  0092H  
+KEY_INC. . . . . . . . . . . . .  B ADDR  0091H  
+MAIN . . . . . . . . . . . . . .  C ADDR  0055H  
+NEXT_STEP. . . . . . . . . . . .  C ADDR  0099H  
+P1 . . . . . . . . . . . . . . .  D ADDR  0090H  PREDEFINED  
+PSW. . . . . . . . . . . . . . .  D ADDR  00D0H  PREDEFINED  
+PWM_HIGH . . . . . . . . . . . .  C ADDR  0097H  
+PWM_LOW. . . . . . . . . . . . .  C ADDR  0093H  NOT USED  
+PWM_OUT. . . . . . . . . . . . .  B ADDR  0090H  
+RCAP2H . . . . . . . . . . . . .  D ADDR  00CBH  PREDEFINED  
+RCAP2L . . . . . . . . . . . . .  D ADDR  00CAH  PREDEFINED  
+SET_50 . . . . . . . . . . . . .  C ADDR  005DH  
+SET_80 . . . . . . . . . . . . .  C ADDR  006CH  
+SP . . . . . . . . . . . . . . .  D ADDR  0081H  PREDEFINED  
+START. . . . . . . . . . . . . .  C ADDR  002EH  
+STEP_CNT . . . . . . . . . . . .    NUMB  0031H  
+T2CON. . . . . . . . . . . . . .  D ADDR  00C8H  PREDEFINED  
+TF2. . . . . . . . . . . . . . .  B ADDR  00CFH  PREDEFINED  
+TH2. . . . . . . . . . . . . . .  D ADDR  00CDH  PREDEFINED  
+TIMER2_ISR . . . . . . . . . . .  C ADDR  0084H  
+TL2. . . . . . . . . . . . . . .  D ADDR  00CCH  PREDEFINED  
+TR2. . . . . . . . . . . . . . .  B ADDR  00CAH  PREDEFINED  
+WAIT_REL_50. . . . . . . . . . .  C ADDR  0065H  
+WAIT_REL_80. . . . . . . . . . .  C ADDR  0074H  
