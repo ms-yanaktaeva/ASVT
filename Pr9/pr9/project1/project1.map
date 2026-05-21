@@ -1,0 +1,84 @@
+HI-TECH Software 8051-C Compiler V9.60
+
+Linker command line:
+
+--edf=C:\PROGRA~2\HI-TEC~1\HC51\lite\9.60\dat\en_msgs.txt \
+  -h+Z:\project1.sym -z -Q8051AH -ol.obj -MZ:\project1.map -E1 \
+  -ver=8051-C#V9.60 -ACODE=00h-0FFFh -pvectors=00h \
+  -prbit=0/20h,rbss,rdata/CODE,irdata/CODE,idata/rbss -pbss=XDATA/idata \
+  -pdata=CODE+100h -pconst=CODE+100h -pstrings=CODE+100h -pnvram=bss,heap \
+  C:\Users\ADCC~1\AppData\Local\Temp\sedc.obj Z:\main_0.obj \
+  C:\PROGRA~2\HI-TEC~1\HC51\lite\9.60\lib\51--nsc.lib 
+
+Object code version is 3.8
+
+Machine type is 8051AH
+
+Call graph:
+
+*start1 size 0,0 offset 0
+*    _main size 0,0 offset 0
+
+		Name          Link     Load   Length Selector Space Scale
+C:\Users\ADCC~1\AppData\Local\Temp\sedc.obj
+		vectors          0        0        3       0     0
+		text            8A       8A        E       0     0
+Z:\main_0.obj   rbss            20       20        1      20     1
+		code             3        3       64       0     0
+		text            67       67       23       0     0
+
+C:\PROGRA~2\HI-TEC~1\HC51\lite\9.60\lib\51--nsc.lib
+powerup.obj     text            98       98        3       0     0
+
+TOTAL		Name          Link     Load   Length
+	CLASS	CODE     
+		vectors          0        0        3
+		text            8A       8A        E
+		code             3        3       64
+		text            67       67       23
+		text            98       98        3
+
+	CLASS	DATA     
+		rbss            20       20        1
+
+	CLASS	XDATA    
+
+	CLASS	BITSEG   
+
+
+
+SEGMENTS	Name		Load	Length	 Top	Selector    Space Class
+
+		vectors         000000	00009B	00009B	       0       0  CODE    
+		rbit            000020	000001	000021	      20       1  BITSEG  
+
+
+UNUSED ADDRESS RANGES
+
+	CODE             09B-FFF
+
+                                  Symbol Table
+
+__Bbss         bss     021  __Bidata       idata   021
+__Birdata      irdata  003  __Brbit        rbit    020
+__Brdata       rdata   003  __Hbss         bss     021
+__Hcode        code    021  __Hconst       const   100
+__Hdata        data    100  __Hheap        heap    021
+__Hidata       idata   021  __Hirdata      irdata  021
+__Hnvram       nvram   021  __Hrbit        rbit    000
+__Hrbss        rbss    021  __Hrdata       rdata   021
+__Hstrings     strings 100  __Htext        text    021
+__Hvectors     vectors 003  __Lbss         bss     021
+__Lcode        code    021  __Lconst       const   100
+__Ldata        data    100  __Lheap        heap    021
+__Lidata       idata   021  __Lirdata      irdata  021
+__Lnvram       nvram   021  __Lrbit        rbit    000
+__Lrbss        rbss    020  __Lrdata       rdata   021
+__Lstrings     strings 100  __Ltext        text    021
+__Lvectors     vectors 000  __S0           (abs)   100
+_dac_codes     code    003  _exit          text    095
+_main          text    067  _step          rbss    020
+intlevel0      (abs)   000  intlevel1      (abs)   000
+powerup        text    098  small_model    (abs)   001
+stack_internal (abs)   001  start          vectors 000
+start1         text    08A  
