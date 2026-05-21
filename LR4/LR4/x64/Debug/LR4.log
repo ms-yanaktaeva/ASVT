@@ -1,0 +1,14 @@
+﻿  Assembling integral.asm...
+integral.asm(1): error A2044: invalid character in file
+integral.asm(5): error A2008: syntax error : .
+integral.asm(6): error A2008: syntax error : .
+integral.asm(28): error A2070: invalid instruction operands
+integral.asm(32): error A2070: invalid instruction operands
+integral.asm(33): error A2070: invalid instruction operands
+integral.asm(34): error A2070: invalid instruction operands
+integral.asm(95): error A2070: invalid instruction operands
+integral.asm(96): error A2070: invalid instruction operands
+integral.asm(97): error A2070: invalid instruction operands
+integral.asm(100): error A2070: invalid instruction operands
+integral.asm(103): warning A6004: procedure argument or local not referenced : C
+C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\BuildCustomizations\masm.targets(70,5): error MSB3721: выход из команды "ml64.exe /c /nologo /Zi /Fo"x64\Debug\integral.obj" /W3 /errorReport:prompt  /Taintegral.asm" с кодом "1".
